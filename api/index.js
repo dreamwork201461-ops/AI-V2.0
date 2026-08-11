@@ -12,19 +12,18 @@ export default async function handler(req, res) {
     }
 
     try {
-        // 请把双引号里的内容替换为你从 Google AI Studio 复制的真实 API 密钥
+        // 在这里填入你的真实 API 密钥
         const apiKey = "AQ.Ab8RN6JfIQPto5aOto1ih-ilzk84irxl4TgI49LC0JB_Sdjwog"; 
         
         const userMessage = req.body.message || "你好";
         
-        // 使用标准的 x-goog-api-key 标头传递密钥，彻底解决 401 认证错误
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+        // 必须使用 ?key= 拼在 URL 后面，Google 才会通过认证
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
         const apiResponse = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'x-goog-api-key': apiKey
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: userMessage }] }]
