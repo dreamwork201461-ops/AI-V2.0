@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-    // 设置跨域头
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -13,15 +12,20 @@ export default async function handler(req, res) {
     }
 
     try {
-        // 在这里填入你的 Google AI Studio 密钥
+        // 请把双引号里的内容替换为你从 Google AI Studio 复制的真实 API 密钥
         const apiKey = "AQ.Ab8RN6JfIQPto5aOto1ih-ilzk84irxl4TgI49LC0JB_Sdjwog"; 
         
         const userMessage = req.body.message || "你好";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        
+        // 使用标准的 x-goog-api-key 标头传递密钥，彻底解决 401 认证错误
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
 
         const apiResponse = await fetch(apiUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey
+            },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: userMessage }] }]
             })
@@ -29,7 +33,6 @@ export default async function handler(req, res) {
 
         const data = await apiResponse.json();
 
-        // 检查返回的数据结构是否正确
         if (data.candidates && data.candidates.length > 0) {
             const replyText = data.candidates[0].content.parts[0].text;
             return res.status(200).json({
@@ -39,7 +42,7 @@ export default async function handler(req, res) {
         } else {
             return res.status(500).json({
                 code: 500,
-                error: "AI 未能返回有效内容: " + JSON.stringify(data)
+                error: "AI 返回格式异常: " + JSON.stringify(data)
             });
         }
 
