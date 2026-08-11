@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     try {
         // 在这里填入你的真实 API 密钥
-        const apiKey = "AQ.Ab8RN6JfIQPto5aOto1ih-ilzk84irxl4TgI49LC0JB_Sdjwog"; 
+        const apiKey = "AQ.Ab8RN6Ltge7NeeE3sX6MkDUel8dvkMvkXT0FCPYzQNfVPffy1g"; 
         
         const userMessage = req.body.message || "你好";
         
